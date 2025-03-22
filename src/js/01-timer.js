@@ -36,13 +36,11 @@ const flatpickrOnClose = selectedDates => {
   console.log('selectedDates: ', selectedDates, new Date().toString());
   defaultDate = selectedDates[0];
   userSelectedDate = selectedDates[1];
-  console.log('MS: ', defaultDate !== new Date());
-  if (defaultDate !== new Date().toString()) {
-    iziToast.error({
-      title: 'Error',
-      message: 'Please choose a date in the future',
-    });
-  } else {
+  console.log(
+    'MS: ',
+    defaultDate.toString().split(' ')[2] !== new Date().split(' ')[2]
+  );
+
     // Ms
     defaultDateMs = Date.parse(defaultDate);
     userSelectedDateMs = Date.parse(userSelectedDate);
@@ -50,7 +48,7 @@ const flatpickrOnClose = selectedDates => {
     console.log('Ms: ', ms);
 
     document.querySelector('button').disabled = false;
-  }
+   
 };
 
 flatpickr('#datetime-picker', {
