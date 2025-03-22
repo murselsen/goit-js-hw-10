@@ -33,19 +33,22 @@ function convertMs(ms) {
 }
 
 const flatpickrOnClose = selectedDates => {
+  console.log('selectedDates: ', selectedDates, new Date().toString());
   defaultDate = selectedDates[0];
   userSelectedDate = selectedDates[1];
-
-  if ( det)
-
-
-  // Ms
-  defaultDateMs = Date.parse(defaultDate);
-  userSelectedDateMs = Date.parse(userSelectedDate);
-  ms = userSelectedDateMs - defaultDateMs;
-  console.log('Ms: ', ms);
-  if (!ms) {
+  console.log('MS: ', defaultDate !== new Date());
+  if (defaultDate !== new Date().toString()) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please choose a date in the future',
+    });
   } else {
+    // Ms
+    defaultDateMs = Date.parse(defaultDate);
+    userSelectedDateMs = Date.parse(userSelectedDate);
+    ms = userSelectedDateMs - defaultDateMs;
+    console.log('Ms: ', ms);
+
     document.querySelector('button').disabled = false;
   }
 };
