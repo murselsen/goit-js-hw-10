@@ -17,12 +17,21 @@ input {
   outline: none;
 }
 
-input:hover{
+input:hover {
   border: 1px solid rgba(0, 0, 0, 1);
 }
-input:active{
+input:active,
+input:focus {
+  border: 1px solid rgba(78, 117, 255, 1);
+}
+
+
+input:disabled{
   
 }
+
 .form {
   width: fit-content;
-  display: fle
+  display: flex;
+  gap: 8px;
+}
