@@ -6,12 +6,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-let userSelectedDate;
-let defaultDate;
-
-let defaultDateMs;
-let userSelectedDateMs;
-let ms;
+let userSelectedDate = null;
+let timerInterval = null;
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -32,40 +28,69 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-const flatpickrOnClose = selectedDates => {
-  console.log('selectedDates: ', selectedDates, new Date().toString());
-  defaultDate = selectedDates[0];
-  userSelectedDate = selectedDates[1];
-  console.log(
-    'MS: ',
-    defaultDate.toString().split(' ')[2] !== new Date().split(' ')[2]
-  );
+const renderTimer = userDate => {
+  const nowDate = new Date();
+  const date = new Date(userSelectedDate);
+  const timeDifference = new Date(date - nowDate);
+  if (timeDifference < 0) {
+    clearInterval(timerInterval);
+    iziToast.error({
+      title: 'Error',
+      displayMode: 'once',
+      message: 'The selected date has already passed.',
+      position: 'topRight',
+      timeout: 3000,
+    });
+    document.getElementById('datetime-picker-submit').disabled = true;
 
-    // Ms
-    defaultDateMs = Date.parse(defaultDate);
-    userSelectedDateMs = Date.parse(userSelectedDate);
-    ms = userSelectedDateMs - defaultDateMs;
-    console.log('Ms: ', ms);
-
-    document.querySelector('button').disabled = false;
-   
+    return;
+  }
+  const milliseconds = timeDifference.getTime();
+  const convertMsResult = convertMs(milliseconds);
+  for (const key in convertMsResult) {
+    document.querySelector(`[data-${key}]`).textContent = String(
+      convertMsResult[key]
+    ).padStart(2, '0');
+  }
 };
 
-flatpickr('#datetime-picker', {
+const options = {
   enableTime: true,
+
   time_24hr: true,
   defaultDate: new Date(),
-
   minuteIncrement: 1,
-  mode: 'range',
-  onClose: flatpickrOnClose,
-});
+  onClose(selectedDates, dateStr, instance) {
+    console.log({
+      selectedDates,
+      dateStr,
+      instance,
+    });
+    userSelectedDate = selectedDates[0];
 
-document.querySelector('button').addEventListener('click', e => {
-  let result = convertMs(ms);
-  console.log(result);
-  document.querySelector('span[data-days]').textContent = result.days;
-  document.querySelector('span[data-hours]').textContent = result.hours;
-  document.querySelector('span[data-minutes]').textContent = result.minutes;
-  document.querySelector('span[data-seconds]').textContent = result.seconds;
-});
+    if (userSelectedDate < instance.now) {
+      document.getElementById('datetime-picker-submit').disabled = true;
+      iziToast.warning({
+        title: 'Warning',
+        displayMode: 'once',
+        message: 'Please choose a date in the future.',
+        position: 'topRight',
+        timeout: 3000,
+      });
+    } else {
+      document.getElementById('datetime-picker-submit').disabled = false;
+      renderTimer(userSelectedDate);
+    }
+  },
+};
+
+flatpickr('#datetime-picker', options);
+
+document
+  .getElementById('datetime-picker-submit')
+  .addEventListener('click', e => {
+    e.preventDefault();
+    timerInterval = setInterval(() => {
+      renderTimer(userSelectedDate);
+    }, 1000);
+  });

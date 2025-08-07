@@ -8,6 +8,19 @@
   gap: 32px;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  padding: 30px;
+  border: 1px solid rgba(128, 128, 128, 1);
+}
+
+.form__label {
+  display: flex;
+  flex-direction: column;
+}
+
 input {
   padding: 8px 16px;
   font-family: Montserrat;
@@ -23,6 +36,7 @@ input {
 input:hover {
   border: 1px solid rgba(0, 0, 0, 1);
 }
+
 input:active,
 input:focus {
   border: 1px solid rgba(78, 117, 255, 1);
@@ -66,12 +80,14 @@ button:disabled {
   display: flex;
   gap: 24px;
 }
+
 .timer .field {
   display: flex;
   flex-direction: column;
   gap: 8px;
   text-align: center;
 }
+
 .timer .field .value {
   font-family: Montserrat;
   font-weight: 400;
